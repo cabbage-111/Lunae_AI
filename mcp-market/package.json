@@ -1,0 +1,18 @@
+{
+  "name": "mcp-market",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Manifest-first MCP index: load publishers' manifests, prove namespaces, emit client configs.",
+  "engines": {
+    "node": ">=22"
+  },
+  "bin": {
+    "mcp-market": "./src/cli.js"
+  },
+  "scripts": {
+    "test": "node --test \"test/*.test.js\"",
+    "check": "node --check src/cli.js",
+    "cli": "node src/cli.js"
+  }
+}

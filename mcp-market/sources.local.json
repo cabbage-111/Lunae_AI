@@ -1,0 +1,7 @@
+[
+  {
+    "id": "local-examples",
+    "type": "marketplace",
+    "path": "./examples/marketplace.json"
+  }
+]

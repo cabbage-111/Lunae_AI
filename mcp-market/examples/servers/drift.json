@@ -1,0 +1,21 @@
+{
+  "name": "com.acme/drift",
+  "version": "0.1.0",
+  "description": "Sample with four defects the loader can still catch.",
+  "publisher": {
+    "namespace": "com.acme",
+    "displayName": "Acme",
+    "verifiedBy": "manual"
+  },
+  "run": {
+    "type": "stdio",
+    "command": "npx",
+    "args": ["-y", "some-other-mcp"]
+  },
+  "packages": [
+    {
+      "registry": "npm",
+      "identifier": "@acme/drift-mcp"
+    }
+  ]
+}

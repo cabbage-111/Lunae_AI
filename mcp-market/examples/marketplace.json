@@ -1,0 +1,5 @@
+{
+  "name": "local-examples",
+  "description": "Checked-in manifests used by the tests and by the offline demo.",
+  "servers": ["./servers/weather.json", "./servers/notes.json"]
+}

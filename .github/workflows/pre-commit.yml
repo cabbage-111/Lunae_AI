@@ -1,0 +1,40 @@
+name: Pre-commit
+
+'on':
+  push:
+    branches: [main, feat/workforce-bundle-product]
+  pull_request:
+    branches: [main, feat/workforce-bundle-product]
+
+permissions:
+  contents: read
+
+jobs:
+  pre-commit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v4
+
+      - name: Install dev dependencies
+        run: uv sync --project backend --group dev
+
+      - name: Run pre-commit
+        run: |
+          uv run --project backend pre-commit run \
+            --config backend/.pre-commit-config.yaml --files $(git ls-files backend)
+        env:
+          SKIP: no-commit-to-branch,bandit-full
+
+      - name: Run full backend Bandit scan
+        run: >-
+          uv run --project backend pre-commit run bandit-full
+          --config backend/.pre-commit-config.yaml
+          --hook-stage manual --all-files

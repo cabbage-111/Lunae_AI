@@ -1,0 +1,21 @@
+{
+  "name": "io.example/weather",
+  "version": "1.2.0",
+  "description": "Current conditions and forecast for a city.",
+  "publisher": {
+    "namespace": "io.example",
+    "displayName": "Example Labs",
+    "url": "https://example.io",
+    "verifiedBy": "dns-txt"
+  },
+  "run": {
+    "type": "http",
+    "url": "https://mcp.example.io/mcp",
+    "headers": {
+      "x-api-key": "${WEATHER_API_KEY}"
+    }
+  },
+  "permissions": {
+    "network": ["mcp.example.io"]
+  }
+}

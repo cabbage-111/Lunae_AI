@@ -1,0 +1,68 @@
+{
+  "$comment": "One case table, three implementations. server/app/core/mcp_auth.py, backend/app/service/mcp_config.py and src/lib/mcpAuth.ts run in three processes that cannot share a module, so the definition is duplicated by necessity -- and pinned here so a copy that drifts fails a test instead of shipping a 401 nobody can attribute.",
+  "cases": [
+    {
+      "id": "real-value-kept",
+      "field": "headers",
+      "input": { "x-api-key": "sk-live-123" },
+      "value": { "x-api-key": "sk-live-123" },
+      "warnings": []
+    },
+    {
+      "id": "double-brace-hint-blanked-key-kept",
+      "field": "headers",
+      "input": { "x-api-key": "{{get one at exa.ai}}" },
+      "value": { "x-api-key": "" },
+      "warnings": ["AUTH_VALUE_BLANKED"]
+    },
+    {
+      "id": "dollar-reference-blanked-key-kept",
+      "field": "headers",
+      "input": { "Authorization": "${ACME_KEY}" },
+      "value": { "Authorization": "" },
+      "warnings": ["AUTH_VALUE_BLANKED"]
+    },
+    {
+      "id": "nameless-key-dropped",
+      "field": "headers",
+      "input": { "  ": "orphan", "x-api-key": "sk-1" },
+      "value": { "x-api-key": "sk-1" },
+      "warnings": ["AUTH_KEY_DROPPED"]
+    },
+    {
+      "id": "only-nameless-key-is-nothing",
+      "field": "headers",
+      "input": { "": "orphan" },
+      "value": null,
+      "warnings": ["AUTH_KEY_DROPPED"]
+    },
+    {
+      "id": "absent-is-nothing",
+      "field": "headers",
+      "input": null,
+      "value": null,
+      "warnings": []
+    },
+    {
+      "id": "empty-object-is-nothing",
+      "field": "headers",
+      "input": {},
+      "value": null,
+      "warnings": []
+    },
+    {
+      "id": "numeric-value-stringified",
+      "field": "env",
+      "input": { "PORT": 8080 },
+      "value": { "PORT": "8080" },
+      "warnings": []
+    },
+    {
+      "id": "mixed-hint-and-real",
+      "field": "env",
+      "input": { "EXA_API_KEY": "{{go get one}}", "REGION": "eu" },
+      "value": { "EXA_API_KEY": "", "REGION": "eu" },
+      "warnings": ["AUTH_VALUE_BLANKED"]
+    }
+  ]
+}

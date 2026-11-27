@@ -1,0 +1,161 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://eigent.ai/schemas/mcp-manifest.schema.json",
+  "title": "MCP server manifest",
+  "description": "A publisher-authored description of one MCP server. The loader validates against this shape, then applies the rules in src/validate.js.",
+  "type": "object",
+  "required": ["name", "version", "publisher", "run"],
+  "additionalProperties": true,
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "name": {
+      "type": "string",
+      "pattern": "^[a-z0-9](?:[a-z0-9-]*[a-z0-9])?(?:\\.[a-z0-9](?:[a-z0-9-]*[a-z0-9])?)+\\/[a-z0-9][a-z0-9._-]*$",
+      "description": "Reverse-DNS identifier. The prefix before the slash is the namespace the publisher must own."
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+(?:-[0-9A-Za-z.-]+)?(?:\\+[0-9A-Za-z.-]+)?$",
+      "description": "Exact semver. A range cannot be resolved by a loader that never sees the artifact."
+    },
+    "description": {
+      "type": "string"
+    },
+    "title": {
+      "type": "string",
+      "description": "Human-readable name for market listings. Defaults to the local part of name."
+    },
+    "category": {
+      "type": "string",
+      "description": "Preferred market category. When absent the host classifies the entry from its name and description."
+    },
+    "categories": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Ordered category hints; the first entry wins, same as category."
+    },
+    "publisher": {
+      "type": "object",
+      "required": ["namespace"],
+      "additionalProperties": true,
+      "properties": {
+        "namespace": {
+          "type": "string",
+          "pattern": "^[a-z0-9](?:[a-z0-9-]*[a-z0-9])?(?:\\.[a-z0-9](?:[a-z0-9-]*[a-z0-9])?)+$"
+        },
+        "displayName": {
+          "type": "string"
+        },
+        "url": {
+          "type": "string",
+          "format": "uri"
+        },
+        "verifiedBy": {
+          "enum": [
+            "dns-txt",
+            "github-org",
+            "signed-manifest",
+            "sigstore",
+            "manual"
+          ],
+          "description": "How the namespace claim is proven. Anything other than a listed mechanism is treated as self-asserted."
+        },
+        "domains": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Additional hosts allowed to serve this server's endpoint."
+        }
+      }
+    },
+    "run": {
+      "type": "object",
+      "required": ["type"],
+      "additionalProperties": true,
+      "properties": {
+        "type": { "enum": ["stdio", "http"] },
+        "command": {
+          "type": "string",
+          "description": "Required for stdio. An MCP server is an external process; it cannot infer a launcher."
+        },
+        "args": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "url": {
+          "type": "string",
+          "description": "Required for http. May contain {variable} placeholders in the path only."
+        },
+        "env": {
+          "type": "object",
+          "additionalProperties": { "type": "string" },
+          "description": "Values may reference ${ENV_NAME}, which the host resolves to a prompt or an environment variable."
+        },
+        "headers": {
+          "type": "object",
+          "additionalProperties": { "type": "string" },
+          "description": "Never templated with {variable}. Only ${ENV_NAME} references are allowed."
+        }
+      }
+    },
+    "auth": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "type": { "type": "string" },
+        "header": { "type": "string" },
+        "value": { "type": "string" },
+        "headers": {
+          "type": "object",
+          "additionalProperties": { "type": "string" }
+        }
+      }
+    },
+    "packages": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["identifier", "version"],
+        "additionalProperties": true,
+        "properties": {
+          "registry": {
+            "enum": ["npm", "pypi", "oci", "mcpb"]
+          },
+          "identifier": { "type": "string" },
+          "version": {
+            "type": "string",
+            "pattern": "^\\d+\\.\\d+\\.\\d+"
+          }
+        }
+      },
+      "description": "Every entry must be pinned. The launch command must still reference one of these identifiers."
+    },
+    "permissions": {
+      "type": "object",
+      "additionalProperties": {
+        "oneOf": [
+          { "type": "array", "items": { "type": "string" } },
+          { "type": "boolean" },
+          { "type": "object" }
+        ]
+      },
+      "description": "Declared up front so a host can refuse an undeclared server. Missing means UNDECLARED."
+    },
+    "variables": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name"],
+        "additionalProperties": true,
+        "properties": {
+          "name": { "type": "string" },
+          "description": { "type": "string" },
+          "default": { "type": "string" },
+          "secret": { "type": "boolean" }
+        }
+      },
+      "description": "Substituted into the URL path only. Never into a header."
+    }
+  }
+}
