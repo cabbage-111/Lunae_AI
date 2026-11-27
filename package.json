@@ -192,7 +192,7 @@
     "rimraf": "^6.0.1",
     "shadow-plugin": "2.1.0",
     "storybook": "^10.1.11",
-    "tailwindcss": "4.3.3",
+    "tailwindcss": "4.3.5",
     "typescript": "5.9.3",
     "vite": "^5.4.11",
     "vite-plugin-electron": "^0.29.0",
