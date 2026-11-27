@@ -81,3 +81,4 @@ server/celerybeat-schedule*
 
 # TypeScript incremental build info
 *.tsbuildinfo
+.DS_Store
